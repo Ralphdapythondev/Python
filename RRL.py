@@ -7,6 +7,7 @@ from urllib.parse import urlparse, urlunparse
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
+
 def generate_random_tld(common_tlds=None):
     """
     Generates a random top-level domain.
@@ -20,14 +21,14 @@ def generate_random_tld(common_tlds=None):
     """
     if common_tlds is None:
         common_tlds = ['com', 'net', 'org', 'info', 'biz', 'co', 'us', 'uk']
-    
-    if random.choice([True, False]):
-        tld = random.choice(common_tlds)
-    else:
-        tld = ''.join(random.choices(string.ascii_lowercase, k=random.choice([2, 3])))
-    
+
+    tld = random.choice(common_tlds) if random.choice([True, False]) else ''.join(
+        random.choices(string.ascii_lowercase, k=random.choice([2, 3]))
+    )
+
     logging.debug(f"Generated TLD: {tld}")
     return tld
+
 
 def generate_links(base_url, num_links=10, path_pattern="/page{}"):
     """
@@ -56,9 +57,10 @@ def generate_links(base_url, num_links=10, path_pattern="/page{}"):
         new_hostname = f"{base_hostname}.{random_tld}"
         new_url = parsed_url._replace(netloc=new_hostname, path=path)
         generated_links.append(urlunparse(new_url))
-    
+
     logging.info(f"Generated {len(generated_links)} links based on {base_url}")
     return generated_links
+
 
 def randomize_and_generate_links(base_url, num_links=10, path_pattern="/page{}"):
     """
@@ -77,17 +79,31 @@ def randomize_and_generate_links(base_url, num_links=10, path_pattern="/page{}")
     logging.info("Randomized the order of generated links.")
     return generated_links
 
+
 def main():
-    parser = argparse.ArgumentParser(description="Generate and randomize URLs based on a base URL.")
-    parser.add_argument('base_url', type=str, help="The base URL to use (e.g., 'https://example.com').")
-    parser.add_argument('--num-links', type=int, default=10, help="The number of links to generate (default: 10).")
-    parser.add_argument('--path-pattern', type=str, default="/page{}", help="The pattern for generating paths (default: '/page{}').")
+    parser = argparse.ArgumentParser(
+        description="Generate and randomize URLs based on a base URL."
+    )
+    parser.add_argument(
+        'base_url', type=str, help="The base URL to use (e.g., 'https://example.com')."
+    )
+    parser.add_argument(
+        '--num-links', type=int, default=10,
+        help="The number of links to generate (default: 10)."
+    )
+    parser.add_argument(
+        '--path-pattern', type=str, default="/page{}",
+        help="The pattern for generating paths (default: '/page{}')."
+    )
     args = parser.parse_args()
 
-    randomized_links = randomize_and_generate_links(args.base_url, args.num_links, args.path_pattern)
+    randomized_links = randomize_and_generate_links(
+        args.base_url, args.num_links, args.path_pattern
+    )
     print("Randomized and Generated Links:")
     for link in randomized_links:
         print(link)
+
 
 if __name__ == "__main__":
     main()
